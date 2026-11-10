@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Весела музична фізкультхвилинка у стилі Пуантилізм</title>
+    <style>
+        :root {
+            --bg-color: #fdf6e2;
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --accent: #ffe66d;
+            --text: #2d3436;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif, system-ui;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            color: var(--text);
+            position: relative;
+        }
+
+        /* Ефект пуантилізму на фоні (різнокольорові крапки) */
+        .pointillism-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 4px dashed var(--secondary);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px var(--accent);
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #636e72;
+            margin-bottom: 20px;
+        }
+
+        /* Персонаж (Ведмедик 🐻) з анімацією пуантилізму */
+        .character-box {
+            font-size: 5rem;
+            margin: 10px 0;
+            transition: transform 0.3s ease;
+            user-select: none;
+        }
+
+        .jump {
+            animation: jumpAnim 0.6s infinite alternate ease-in-out;
+        }
+
+        .spin {
+            animation: spinAnim 1s infinite linear;
+        }
+
+        .stretch {
+            animation: stretchAnim 0.8s infinite alternate ease-in-out;
+        }
+
+        @keyframes jumpAnim {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-40px) scale(1.1, 0.9); }
+        }
+
+        @keyframes spinAnim {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes stretchAnim {
+            0% { transform: scaleY(1); }
+            100% { transform: scaleY(1.3) translateY(-15px); }
+        }
+
+        /* Підказка тренера */
+        .speech-bubble {
+            background: var(--accent);
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 15px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Таймер */
+        .timer {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        /* Кнопки вправ */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .exercise-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 0 #3b9e96;
+            font-family: inherit;
+        }
+
+        .exercise-btn:hover {
+            background-color: #3daea4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #3b9e96;
+        }
+
+        .exercise-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #3b9e96;
+        }
+
+        .exercise-btn:disabled {
+            background-color: #bdc3c7;
+            box-shadow: 0 4px 0 #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Кнопка звуку */
+        .sound-toggle {
+            margin-top: 15px;
+            background: none;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .sound-toggle:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Салюти (крапки пуантилізму, що розлітаються) */
+        .firework-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: explode 1s forwards ease-out;
+            z-index: 20;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(0.2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Фоновий пуантилізм (генерується через JS) -->
+    <canvas class="pointillism-bg" id="pointCanvas"></canvas>
+
+    <div class="container">
+        <h1>🎵 Весела Розминка 🎨</h1>
+        <div class="subtitle">У стилі пуантилізму: рухайся яскраво!</div>
+
+        <div class="character-box" id="character">🐻</div>
+        
+        <div class="speech-bubble" id="speechBubble">Обирай вправу та почнемо!</div>
+        <div class="timer" id="timerDisplay">20</div>
+
+        <div class="btn-group" id="btnGroup">
+            <button class="exercise-btn" onclick="startExercise('jump', 'Пострибай як зайчик 🐰', 'jump')">🐇 Пострибай як зайчик</button>
+            <button class="exercise-btn" onclick="startExercise('spin', 'Покрутися як млин 🌀', 'spin')">🌀 Покрутися як млин</button>
+            <button class="exercise-btn" onclick="startExercise('stretch', 'Потягнися до сонечка ☀️', 'stretch')">☀️ Потягнися до сонечка</button>
+        </div>
+
+        <button class="sound-toggle" id="soundToggleBtn" onclick="toggleSound()">🔊 Увімкнути фонову музику</button>
+    </div>
+
+    <script>
+        // --- ГЕНЕРАЦІЯ ФОНУ У СТИЛІ ПУАНТИЛІЗМУ ---
+        const canvas = document.getElementById('pointCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawPointillismBackground();
+        }
+
+        function drawPointillismBackground() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#ff9f43', '#a29bfe', '#fd79a8', '#55efc4'];
+            const dotCount = Math.floor((canvas.width * canvas.height) / 3500);
+
+            for (let i = 0; i < dotCount; i++) {
+                ctx.beginPath();
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const radius = Math.random() * 8 + 4;
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+                ctx.globalAlpha = 0.45;
+                ctx.fill();
+            }
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+
+        // --- ЗВУКОВИЙ СУПРОВІД (Web Audio API) ---
+        let audioCtx = null;
+        let isMusicPlaying = false;
+        let musicInterval = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Веселий звуковий ефект успіху / салюту
+        function playSuccessSound() {
+            initAudio();
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // До, Мі, Соль, До (високе)
+            notes.forEach((freq, index) => {
+                setTimeout(() => {
+                    if (!audioCtx) return;
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }, index * 100);
+            });
+        }
+
+        // Весела бадьора мелодія під час розминки (простий арпеджіатор)
+        function toggleSound() {
+            initAudio();
+            const btn = document.getElementById('soundToggleBtn');
+            isMusicPlaying = !isMusicPlaying;
+
+            if (isMusicPlaying) {
+                btn.textContent = "🔇 Вимкнути фонову музику";
+                const melodyNotes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
+                let step = 0;
+                musicInterval = setInterval(() => {
+                    if (!isMusicPlaying || !audioCtx) return;
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(melodyNotes[step], audioCtx.currentTime);
+                    
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.2);
+
+                    step = (step + 1) % melodyNotes.length;
+                }, 300);
+            } else {
+                btn.textContent = "🔊 Увімкнути фонову музику";
+                clearInterval(musicInterval);
+            }
+        }
+
+
+        // --- ЛОГІКА ВПРАВИ ТА ТАЙМЕРА ---
+        let timerId = null;
+
+        function startExercise(animClass, speechText, exerciseType) {
+            initAudio();
+            const character = document.getElementById('character');
+            const speechBubble = document.getElementById('speechBubble');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const btnGroup = document.getElementById('btnGroup');
+
+            // Блокуємо кнопки під час вправи
+            const buttons = btnGroup.getElementsByTagName('button');
+            for (let btn of buttons) btn.disabled = true;
+
+            // Запускаємо анімацію персонажа
+            character.className = "character-box " + animClass;
+            speechBubble.textContent = speechText;
+
+            let timeLeft = 20;
+            timerDisplay.textContent = timeLeft;
+
+            const phrases = [
+                "Чудово виходить! Горішків тобі! 🌰",
+                "Ти справжній спортсмен! 🔥",
+                "Тримай темп, не зупиняйся! 💪",
+                "Яскраво й енергійно, як картина мазками! 🎨"
+            ];
+
+            timerId = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+
+                // Періодична зміна підказок
+                if (timeLeft % 5 === 0 && timeLeft > 0) {
+                    speechBubble.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    endExercise(buttons);
+                }
+            }, 1000);
+        }
+
+        function endExercise(buttons) {
+            const character = document.getElementById('character');
+            const speechBubble = document.getElementById('speechBubble');
+            const timerDisplay = document.getElementById('timerDisplay');
+
+            character.className = "character-box";
+            speechBubble.textContent = "Ура! Вправу завершено! Ти супер! 🎉";
+            timerDisplay.textContent = "✨";
+
+            playSuccessSound();
+            createPointillismFireworks();
+
+            // Розблоковуємо кнопки назад
+            setTimeout(() => {
+                for (let btn of buttons) btn.disabled = false;
+                speechBubble.textContent = "Обирай наступну вправу!";
+                timerDisplay.textContent = "20";
+            }, 2500);
+        }
+
+        // Салюти у стилі пуантилізму (різнокольорові крапки розлітаються від центру)
+        function createPointillismFireworks() {
+            const container = document.body;
+            const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#ff9f43', '#a29bfe', '#fd79a8'];
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            for (let i = 0; i < 60; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'firework-dot';
+                dot.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                dot.style.left = centerX + 'px';
+                dot.style.top = centerY + 'px';
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 250 + 50;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+
+                dot.style.setProperty('--dx', `${dx}px`);
+                dot.style.setProperty('--dy', `${dy}px`);
+
+                container.appendChild(dot);
+
+                setTimeout(() => {
+                    dot.remove();
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
